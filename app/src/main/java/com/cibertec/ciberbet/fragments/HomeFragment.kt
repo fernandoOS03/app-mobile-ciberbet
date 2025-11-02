@@ -27,14 +27,15 @@ class HomeFragment : Fragment() {
     private lateinit var deportesRef: DatabaseReference
 
     private val listaEventos = mutableListOf<Evento>()
-    private val listaFiltrada = mutableListOf<Evento>() // Nueva lista temporal
+    private val listaFiltrada = mutableListOf<Evento>()
     private lateinit var adapter: MatchAdapter
 
     private val equiposMap = mutableMapOf<String, Equipo>()
     private val deportesMap = mutableMapOf<String, Deporte>()
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = UserFragmentHomeBinding.inflate(inflater, container, false)
@@ -57,7 +58,26 @@ class HomeFragment : Fragment() {
         deportesRef = db.getReference("deportes")
 
         // Configurar RecyclerView
-        adapter = MatchAdapter(listaFiltrada, equiposMap, deportesMap)
+        adapter = MatchAdapter(listaFiltrada, equiposMap, deportesMap) { evento ->
+            val bundle = Bundle().apply {
+                putString("idEvento", evento.idEvento)
+                putString("equipoLocal", equiposMap[evento.equipoLocal]?.nombre ?: "Equipo Local")
+                putString("equipoVisitante", equiposMap[evento.equipoVisitante]?.nombre ?: "Equipo Visitante")
+                putString("fecha_hora", evento.fecha_hora)
+                putString("ubicacion", evento.ubicacion)
+                putString("estadoEvento", evento.estadoEvento)
+                putInt("resultadoLocal", evento.resultadoLocal)
+                putInt("resultadoVisitante", evento.resultadoVisitante)
+            }
+
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(com.cibertec.ciberbet.R.id.fragment_container, ApuestasFragment().apply {
+                    arguments = bundle
+                })
+                .addToBackStack(null)
+                .commit()
+        }
+
         binding.recyclerViewMatches.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerViewMatches.adapter = adapter
 
@@ -76,7 +96,6 @@ class HomeFragment : Fragment() {
             filtrarPorDeporte("all")
         }
 
-
         cargarDatos()
     }
 
@@ -90,7 +109,6 @@ class HomeFragment : Fragment() {
                 }
                 cargarEquipos()
             }
-
             override fun onCancelled(error: DatabaseError) {}
         })
     }
@@ -105,7 +123,6 @@ class HomeFragment : Fragment() {
                 }
                 cargarEventos()
             }
-
             override fun onCancelled(error: DatabaseError) {}
         })
     }
@@ -117,18 +134,14 @@ class HomeFragment : Fragment() {
                 listaFiltrada.clear()
                 for (data in snapshot.children) {
                     val evento = data.getValue(Evento::class.java)
-                    evento?.let {
-                        listaEventos.add(it)
-                    }
+                    evento?.let { listaEventos.add(it) }
                 }
-                listaFiltrada.addAll(listaEventos) // Mostrar todo por defecto
+                listaFiltrada.addAll(listaEventos)
                 adapter.notifyDataSetChanged()
             }
-
             override fun onCancelled(error: DatabaseError) {}
         })
     }
-
 
     private fun obtenerSaludo(): String {
         val hora = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
@@ -153,7 +166,7 @@ class HomeFragment : Fragment() {
             adapter.notifyDataSetChanged()
         } else {
             listaFiltrada.clear()
-            listaFiltrada.addAll(listaEventos) // si no encuentra el deporte, muestra todo
+            listaFiltrada.addAll(listaEventos)
             adapter.notifyDataSetChanged()
         }
     }
@@ -168,11 +181,8 @@ class HomeFragment : Fragment() {
         activo.setTextColor(Color.WHITE)
     }
 
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
-
-
 }

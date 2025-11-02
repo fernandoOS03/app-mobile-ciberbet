@@ -10,9 +10,10 @@ import com.cibertec.ciberbet.models.Evento
 import com.squareup.picasso.Picasso
 
 class MatchAdapter(
-    private val listaEventos: MutableList<Evento>,
+    private val listaEventos: List<Evento>,
     private val equiposMap: Map<String, Equipo>,
-    private val deportesMap: Map<String, Deporte>
+    private val deportesMap: Map<String, Deporte>,
+    private val onClick: (Evento) -> Unit   // <- agregado
 ) : RecyclerView.Adapter<MatchAdapter.MatchViewHolder>() {
 
     inner class MatchViewHolder(val binding: ItemMatchNewBinding) :
@@ -38,29 +39,13 @@ class MatchAdapter(
             tvFechaHora.text = evento.fecha_hora
             tvUbicacion.text = evento.ubicacion
 
-            /*// Cargar logos si existen
-            if (!equipoLocal?.logo.isNullOrEmpty()) {
-                Picasso.get().load(equipoLocal!!.logo).into(ivTeam1)
+            holder.itemView.setOnClickListener {
+                val evento = listaEventos[position]
+                onClick(evento)
             }
-            if (!equipoVisitante?.logo.isNullOrEmpty()) {
-                Picasso.get().load(equipoVisitante!!.logo).into(ivTeam2)
-            }*/
+
         }
     }
 
     override fun getItemCount() = listaEventos.size
-
-    //Actualiza la lista completa (útil para filtros o recargas)
-
-    fun actualizarLista(nuevaLista: List<Evento>) {
-        listaEventos.clear()
-        listaEventos.addAll(nuevaLista)
-        notifyDataSetChanged()
-    }
-
-    //Agrega un solo evento (si Firebase manda uno nuevo)
-    fun agregarEvento(evento: Evento) {
-        listaEventos.add(evento)
-        notifyItemInserted(listaEventos.size - 1)
-    }
 }
