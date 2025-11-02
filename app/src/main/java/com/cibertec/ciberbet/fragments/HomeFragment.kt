@@ -1,9 +1,11 @@
 package com.cibertec.ciberbet.fragments
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,6 +27,7 @@ class HomeFragment : Fragment() {
     private lateinit var deportesRef: DatabaseReference
 
     private val listaEventos = mutableListOf<Evento>()
+    private val listaFiltrada = mutableListOf<Evento>() // Nueva lista temporal
     private lateinit var adapter: MatchAdapter
 
     private val equiposMap = mutableMapOf<String, Equipo>()
@@ -54,9 +57,25 @@ class HomeFragment : Fragment() {
         deportesRef = db.getReference("deportes")
 
         // Configurar RecyclerView
-        adapter = MatchAdapter(listaEventos, equiposMap, deportesMap)
+        adapter = MatchAdapter(listaFiltrada, equiposMap, deportesMap)
         binding.recyclerViewMatches.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerViewMatches.adapter = adapter
+
+        binding.btnFutbol.setOnClickListener {
+            actualizarBotones(it)
+            filtrarPorDeporte("Futbol")
+        }
+
+        binding.btnVoley.setOnClickListener {
+            actualizarBotones(it)
+            filtrarPorDeporte("Voley")
+        }
+
+        binding.btnBasket.setOnClickListener {
+            actualizarBotones(it)
+            filtrarPorDeporte("all")
+        }
+
 
         cargarDatos()
     }
@@ -95,16 +114,21 @@ class HomeFragment : Fragment() {
         eventosRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 listaEventos.clear()
+                listaFiltrada.clear()
                 for (data in snapshot.children) {
                     val evento = data.getValue(Evento::class.java)
-                    evento?.let { listaEventos.add(it) }
+                    evento?.let {
+                        listaEventos.add(it)
+                    }
                 }
+                listaFiltrada.addAll(listaEventos) // Mostrar todo por defecto
                 adapter.notifyDataSetChanged()
             }
 
             override fun onCancelled(error: DatabaseError) {}
         })
     }
+
 
     private fun obtenerSaludo(): String {
         val hora = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
@@ -115,8 +139,40 @@ class HomeFragment : Fragment() {
         }
     }
 
+    private fun filtrarPorDeporte(nombreDeporte: String) {
+        val deporteSeleccionado = deportesMap.values.find {
+            it.nombre.equals(nombreDeporte, ignoreCase = true)
+        }
+
+        if (deporteSeleccionado != null) {
+            val idDep = deporteSeleccionado.idDeporte
+            val eventosFiltrados = listaEventos.filter { it.idDeporte == idDep }
+
+            listaFiltrada.clear()
+            listaFiltrada.addAll(eventosFiltrados)
+            adapter.notifyDataSetChanged()
+        } else {
+            listaFiltrada.clear()
+            listaFiltrada.addAll(listaEventos) // si no encuentra el deporte, muestra todo
+            adapter.notifyDataSetChanged()
+        }
+    }
+
+    private fun actualizarBotones(activo: View) {
+        val botones = listOf(binding.btnFutbol, binding.btnVoley, binding.btnBasket)
+        for (btn in botones) {
+            btn.setBackgroundColor(Color.parseColor("#EEEEEE"))
+            btn.setTextColor(Color.parseColor("#757575"))
+        }
+        (activo as Button).setBackgroundColor(Color.parseColor("#212121"))
+        activo.setTextColor(Color.WHITE)
+    }
+
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
+
+
 }
