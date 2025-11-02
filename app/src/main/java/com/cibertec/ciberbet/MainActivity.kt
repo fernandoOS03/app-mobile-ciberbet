@@ -71,11 +71,11 @@ class MainActivity : AppCompatActivity() {
                         Toast.makeText(this@MainActivity, "Bienvenido ${usuario.nombres}", Toast.LENGTH_SHORT).show()
 
                         val prefs = getSharedPreferences("SesionUsuario", MODE_PRIVATE)
-                        val editor = prefs.edit()
-                        editor.putInt("usuario_id", usuario.id.toInt())
-                        editor.putString("usuario_nombre", usuario.nombres)
-                        editor.putString("usuario_email", usuario.correo)
-                        editor.apply()
+                        prefs.edit()
+                            .putString("idUsuario", usuario.id.toString())       // antes era usuario_id
+                            .putString("nombreUsuario", usuario.nombres)        // antes era usuario_nombre
+                            .putString("emailUsuario", usuario.correo)
+                            .apply()
 
                         val intent = Intent(this@MainActivity, HomeActivity::class.java)
                         startActivity(intent)

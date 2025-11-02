@@ -101,7 +101,8 @@
                 android:id="@+id/spinnerCuotas"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"/>
+                android:layout_marginTop="16dp"
+                android:minHeight="48dp" />
 
 
             <!-- Monto de apuesta -->
@@ -123,12 +124,13 @@
                     android:id="@+id/etMonto"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:layout_marginStart="8dp"
-                    android:inputType="numberDecimal"
-                    android:hint="S/."
+                    android:layout_weight="1"
                     android:backgroundTint="#BDBDBD"
-                    android:padding="8dp" />
+                    android:hint="S/."
+                    android:inputType="numberDecimal"
+                    android:padding="8dp"
+                    tools:ignore="TouchTargetSizeCheck" />
             </LinearLayout>
 
             <!-- Ganancia -->
@@ -150,14 +152,15 @@
                     android:id="@+id/etGanancia"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:layout_marginStart="8dp"
+                    android:layout_weight="1"
                     android:background="@android:color/transparent"
                     android:enabled="false"
+                    android:padding="8dp"
                     android:text="S/. 0.00"
                     android:textColor="#2E7D32"
                     android:textStyle="bold"
-                    android:padding="8dp" />
+                    tools:ignore="TouchTargetSizeCheck" />
             </LinearLayout>
 
             <!-- Saldos -->
@@ -178,17 +181,6 @@
                 android:textColor="#424242"
                 android:textSize="14sp" />
 
-            <!-- Botones -->
-            <Button
-                android:id="@+id/btnRealizarApuesta"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:backgroundTint="#FF7043"
-                android:text="Realizar apuesta"
-                android:textAllCaps="false"
-                android:textColor="@android:color/white"
-                android:textStyle="bold" />
 
             <Button
                 android:id="@+id/btnConfirmar"

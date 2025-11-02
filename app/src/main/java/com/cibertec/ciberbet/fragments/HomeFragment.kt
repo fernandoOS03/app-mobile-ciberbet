@@ -2,10 +2,13 @@ package com.cibertec.ciberbet.fragments
 
 import android.graphics.Color
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cibertec.ciberbet.adapters.MatchAdapter
@@ -24,6 +27,7 @@ class HomeFragment : Fragment() {
     private lateinit var eventosRef: DatabaseReference
     private lateinit var equiposRef: DatabaseReference
     private lateinit var deportesRef: DatabaseReference
+    private lateinit var usuarioRef: DatabaseReference
 
     private val listaEventos = mutableListOf<Evento>()
     private val listaFiltrada = mutableListOf<Evento>()
@@ -33,6 +37,7 @@ class HomeFragment : Fragment() {
     private val deportesMap = mutableMapOf<String, Deporte>()
 
     private var idUsuario: String = ""
+    private var saldoActual: Double = 0.0
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -46,11 +51,13 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Obtener idUsuario desde argumentos
-        idUsuario = arguments?.getString("idUsuario") ?: ""
-
-        binding.tvUserName.text = "Usuario" // opcional: luego puedes obtener nombre desde Firebase
+        val prefs = requireActivity().getSharedPreferences("SesionUsuario", AppCompatActivity.MODE_PRIVATE)
+        idUsuario = prefs.getString("idUsuario", "") ?: ""
+        val nombreUsuario = prefs.getString("nombreUsuario", "Usuario") ?: "Usuario"
+        binding.tvUserName.text = nombreUsuario
         binding.tvGreeting.text = obtenerSaludo()
+
+        inicializarSaldo() // <-- inicializamos saldo en tiempo real
 
         // Firebase
         val db = FirebaseDatabase.getInstance()
@@ -85,7 +92,7 @@ class HomeFragment : Fragment() {
 
         binding.btnFutbol.setOnClickListener {
             actualizarBotones(it)
-            filtrarPorDeporte("Futbol")
+            filtrarPorDeporte("all")
         }
 
         binding.btnVoley.setOnClickListener {
@@ -95,10 +102,56 @@ class HomeFragment : Fragment() {
 
         binding.btnBasket.setOnClickListener {
             actualizarBotones(it)
-            filtrarPorDeporte("all")
+            filtrarPorDeporte("Futbol")
         }
 
         cargarDatos()
+    }
+
+    private fun inicializarSaldo() {
+        val db = FirebaseDatabase.getInstance()
+        usuarioRef = db.getReference("usuarios").child(idUsuario)
+
+        usuarioRef.child("saldo").addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                saldoActual = snapshot.getValue(Double::class.java) ?: 0.0
+                binding.tvBalanceAmount.text = "S/. %.2f".format(saldoActual)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Manejo de error
+            }
+        })
+
+        // Para mostrar saldo después de ingresar un monto
+        binding.etSearch.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                actualizarSaldoPreview(s.toString())
+            }
+            override fun afterTextChanged(s: Editable?) {}
+        })
+    }
+
+    private fun actualizarSaldoPreview(montoStr: String) {
+        val monto = montoStr.toDoubleOrNull() ?: 0.0
+        val saldoDespues = saldoActual - monto
+        binding.tvBalanceAmount.setTextColor(if (saldoDespues < 0) Color.RED else Color.BLACK)
+        binding.tvBalanceAmount.text = "S/. %.2f".format(saldoDespues)
+    }
+
+    fun confirmarApuesta(monto: Double) {
+        if (saldoActual >= monto) {
+            val nuevoSaldo = saldoActual - monto
+            usuarioRef.child("saldo").setValue(nuevoSaldo)
+                .addOnSuccessListener {
+                    saldoActual = nuevoSaldo
+                    binding.tvBalanceAmount.text = "S/. %.2f".format(saldoActual)
+                }
+                .addOnFailureListener {
+                    // Error al actualizar saldo
+                }
+        }
     }
 
     private fun cargarDatos() {

@@ -83,9 +83,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="#212121"
-            android:text="Fútbol"
+            android:text="Todos"
             android:textColor="@android:color/white"
-            app:icon="@drawable/ic_futbol"
+            app:icon="@drawable/ic_basket"
             app:iconTint="@android:color/white" />
 
         <Button
@@ -107,9 +107,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="#EEEEEE"
-            android:text="TODOS"
+            android:text="Futbol"
             android:textColor="#757575"
-            app:icon="@drawable/ic_basket"
+            app:icon="@drawable/ic_futbol"
             app:iconTint="#757575"
             app:strokeWidth="0dp" />
     </LinearLayout>

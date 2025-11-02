@@ -25,6 +25,7 @@ class RegisterActivity : AppCompatActivity() {
 
         // Este código se ejecuta cuando el usuario hace clic en el botón de login
         binding.textViewLogin.setOnClickListener {
+
             handleInicioSesion() // Llama a la función que definimos abajo
         }
         binding.buttonRegister.setOnClickListener {
@@ -88,6 +89,7 @@ class RegisterActivity : AppCompatActivity() {
         val register = Intent(this, MainActivity::class.java)
         startActivity(register)
         finish()
+
     }
 
     private fun handleRegister() {
@@ -104,11 +106,12 @@ class RegisterActivity : AppCompatActivity() {
         val correo = binding.editTextEmail.text.toString().trim()
         val password = binding.editTextPassword.text.toString().trim()
 
-        // Verificar que no haya campos vacíos
         if (nombres.isEmpty() || dni.isEmpty() || telefono.isEmpty() || correo.isEmpty() || password.isEmpty()) {
             Toast.makeText(this, "Completa todos los campos", Toast.LENGTH_SHORT).show()
             return
         }
+
+        val saldoInicial = 500.0
 
         // Preparar objeto para Room
         val usuarioRoom = Usuario(
@@ -131,7 +134,8 @@ class RegisterActivity : AppCompatActivity() {
             "telefono" to telefono,
             "correo" to correo,
             "password" to password,
-            "flgEli" to false
+            "flgEli" to false,
+            "saldo" to saldoInicial
         )
 
         // Guardar en Room en hilo secundario
@@ -142,14 +146,21 @@ class RegisterActivity : AppCompatActivity() {
             launch(Dispatchers.Main) {
                 database.child(idUsuarioFirebase).setValue(usuarioFirebase)
                     .addOnSuccessListener {
-                        Toast.makeText(this@RegisterActivity, "Registro exitoso", Toast.LENGTH_SHORT).show()
-                        handleInicioSesion() // Redirige a login
+                        Toast.makeText(this@RegisterActivity, "Registro exitoso. Saldo inicial: S/. $saldoInicial", Toast.LENGTH_SHORT).show()
+                        handleInicioSesion()
                     }
                     .addOnFailureListener { e ->
                         Toast.makeText(this@RegisterActivity, "Error al registrar en Firebase: ${e.message}", Toast.LENGTH_LONG).show()
                     }
             }
         }
+
+        val prefs = getSharedPreferences("SesionUsuario", MODE_PRIVATE)
+        prefs.edit()
+            .putString("idUsuario", idUsuarioFirebase)
+            .putString("nombreUsuario", nombres)
+            .apply()
+
     }
 
 }
