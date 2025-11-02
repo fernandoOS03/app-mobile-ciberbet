@@ -9,7 +9,7 @@ import com.cibertec.ciberbet.models.Equipo
 import com.cibertec.ciberbet.models.Evento
 
 class MatchAdapter(
-    private val listaEventos: List<Evento>,
+    private val listaEventos: MutableList<Evento>,
     private val equiposMap: Map<String, Equipo>,
     private val deportesMap: Map<String, Deporte>
 ) : RecyclerView.Adapter<MatchAdapter.MatchViewHolder>() {
@@ -48,4 +48,18 @@ class MatchAdapter(
     }
 
     override fun getItemCount() = listaEventos.size
+
+    //Actualiza la lista completa (útil para filtros o recargas)
+
+    fun actualizarLista(nuevaLista: List<Evento>) {
+        listaEventos.clear()
+        listaEventos.addAll(nuevaLista)
+        notifyDataSetChanged()
+    }
+
+    //Agrega un solo evento (si Firebase manda uno nuevo)
+    fun agregarEvento(evento: Evento) {
+        listaEventos.add(evento)
+        notifyItemInserted(listaEventos.size - 1)
+    }
 }

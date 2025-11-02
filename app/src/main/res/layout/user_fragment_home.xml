@@ -79,6 +79,7 @@
         app:layout_constraintTop_toBottomOf="@id/etSearch">
 
         <Button
+            android:id="@+id/btnFutbol"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="#212121"
@@ -88,6 +89,7 @@
             app:iconTint="@android:color/white" />
 
         <Button
+            android:id="@+id/btnVoley"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -100,11 +102,12 @@
             app:strokeWidth="0dp" />
 
         <Button
+            android:id="@+id/btnBasket"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="#EEEEEE"
-            android:text="Basket"
+            android:text="TODOS"
             android:textColor="#757575"
             app:icon="@drawable/ic_basket"
             app:iconTint="#757575"
