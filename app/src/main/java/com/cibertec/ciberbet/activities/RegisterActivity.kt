@@ -13,6 +13,7 @@ import com.cibertec.ciberbet.MainActivity
 import com.cibertec.ciberbet.models.Usuario
 import com.cibertec.ciberbet.data.database.AppApplication
 import com.cibertec.ciberbet.databinding.AppActivityRegisterBinding
+import com.google.firebase.database.FirebaseDatabase
 
 class RegisterActivity : AppCompatActivity() {
     private lateinit var binding: AppActivityRegisterBinding
@@ -90,41 +91,65 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun handleRegister() {
-        //Esto verifica si todos los campos son válidos antes de continuar
+        // Validar campos
         if(!validateFields()){
-            Toast.makeText(this, "Por favor corrige los errores del formulario",Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Por favor corrige los errores del formulario", Toast.LENGTH_LONG).show()
             return
         }
 
+        // Obtener valores de los campos
         val nombres = binding.editTextFullName.text.toString().trim()
         val dni = binding.editTextDni.text.toString().trim()
         val telefono = binding.editTextPhone.text.toString().trim()
         val correo = binding.editTextEmail.text.toString().trim()
         val password = binding.editTextPassword.text.toString().trim()
 
-        if (nombres.isNotEmpty() && dni.isNotEmpty() && telefono.isNotEmpty() &&
-            correo.isNotEmpty() && password.isNotEmpty()) {
-            val usuario = Usuario(
-                nombres = nombres,
-                dni = dni,
-                telefono = telefono,
-                correo = correo,
-                password = password,
-                flgEli = false
-            )
-
-            //  Esti ejecutaremos en un hilo secundario
-            lifecycleScope.launch(Dispatchers.IO) {
-                AppApplication.database.usuarioDao().addUsuario(usuario)
-
-                // Cambiamos al hilo principal para mostrar el Toast
-                launch(Dispatchers.Main) {
-                    Toast.makeText(this@RegisterActivity, "Registro exitoso", Toast.LENGTH_SHORT).show()
-                    handleInicioSesion()
-                }
-            }
-        } else {
+        // Verificar que no haya campos vacíos
+        if (nombres.isEmpty() || dni.isEmpty() || telefono.isEmpty() || correo.isEmpty() || password.isEmpty()) {
             Toast.makeText(this, "Completa todos los campos", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // Preparar objeto para Room
+        val usuarioRoom = Usuario(
+            nombres = nombres,
+            dni = dni,
+            telefono = telefono,
+            correo = correo,
+            password = password,
+            flgEli = false
+        )
+
+        // Preparar Firebase
+        val database = FirebaseDatabase.getInstance().reference.child("usuarios")
+        val idUsuarioFirebase = database.push().key ?: java.util.UUID.randomUUID().toString()
+
+        val usuarioFirebase = mapOf(
+            "idUsuario" to idUsuarioFirebase,
+            "nombres" to nombres,
+            "dni" to dni,
+            "telefono" to telefono,
+            "correo" to correo,
+            "password" to password,
+            "flgEli" to false
+        )
+
+        // Guardar en Room en hilo secundario
+        lifecycleScope.launch(Dispatchers.IO) {
+            AppApplication.database.usuarioDao().addUsuario(usuarioRoom)
+
+            // Guardar en Firebase en hilo principal
+            launch(Dispatchers.Main) {
+                database.child(idUsuarioFirebase).setValue(usuarioFirebase)
+                    .addOnSuccessListener {
+                        Toast.makeText(this@RegisterActivity, "Registro exitoso", Toast.LENGTH_SHORT).show()
+                        handleInicioSesion() // Redirige a login
+                    }
+                    .addOnFailureListener { e ->
+                        Toast.makeText(this@RegisterActivity, "Error al registrar en Firebase: ${e.message}", Toast.LENGTH_LONG).show()
+                    }
+            }
         }
     }
+
 }
