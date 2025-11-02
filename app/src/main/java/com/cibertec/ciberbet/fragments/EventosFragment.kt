@@ -287,6 +287,41 @@ class EventosFragment : Fragment() {
         if (posDeporte >= 0) {
             binding.spinnerDeporte.setSelection(posDeporte)
 
+            // Filtrar equipos y esperar a que el adaptador se actualice
+            filtrarEquiposPorDeporte(evento.idDeporte)
+
+            // Esperamos un poco para asegurar que los equipos filtrados ya se cargaron
+            binding.spinnerEquipoLocal.postDelayed({
+                val posLocal = equiposFiltrados.indexOfFirst { it.idEquipo == evento.equipoLocal }
+                val posVisitante = equiposFiltrados.indexOfFirst { it.idEquipo == evento.equipoVisitante }
+
+                if (posLocal >= 0) binding.spinnerEquipoLocal.setSelection(posLocal)
+                if (posVisitante >= 0) binding.spinnerEquipoVisitante.setSelection(posVisitante)
+            }, 200) // 200ms suele bastar, pero puedes ajustar si hace falta
+        }
+
+        binding.etFechaHora.setText(evento.fecha_hora)
+        binding.etUbicacion.setText(evento.ubicacion)
+
+        val posEstado = estadosPosibles.indexOf(evento.estadoEvento)
+        if (posEstado >= 0) binding.spinnerEstado.setSelection(posEstado)
+
+        binding.btnGuardarEvento.text = "Actualizar"
+        binding.btnCancelar.visibility = View.VISIBLE
+
+        binding.root.scrollTo(0, 0)
+    }
+
+
+    /*
+    private fun iniciarEdicion(evento: Evento) {
+        eventoEditando = evento
+
+        // Seleccionar deporte
+        val posDeporte = listaDeportes.indexOfFirst { it.idDeporte == evento.idDeporte }
+        if (posDeporte >= 0) {
+            binding.spinnerDeporte.setSelection(posDeporte)
+
             // Filtrar equipos del deporte
             filtrarEquiposPorDeporte(evento.idDeporte)
 
@@ -309,6 +344,7 @@ class EventosFragment : Fragment() {
 
         binding.root.scrollTo(0, 0)
     }
+    */
 
     private fun actualizarEvento() {
         val fechaHora = binding.etFechaHora.text.toString().trim()

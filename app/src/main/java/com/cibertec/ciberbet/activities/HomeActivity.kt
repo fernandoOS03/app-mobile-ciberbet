@@ -1,8 +1,10 @@
 package com.cibertec.ciberbet.activities
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import com.cibertec.ciberbet.MainActivity
 import com.cibertec.ciberbet.R
 import com.cibertec.ciberbet.databinding.UserInicioBinding
 import com.cibertec.ciberbet.fragments.HomeFragment
@@ -20,6 +22,7 @@ class HomeActivity : AppCompatActivity() {
         // Cargar fragment inicial (Home)
         if (savedInstanceState == null) {
             cargarFragment(HomeFragment())
+            binding.bottomNavigation.selectedItemId = R.id.btnNavHome
         }
 
         // Configurar el Bottom Navigation
@@ -34,7 +37,7 @@ class HomeActivity : AppCompatActivity() {
                     true
                 }
                 R.id.btnNavLogout -> {
-                    cargarFragment(PerfilFragment())
+                    cerrarSesion()
                     true
                 }
                 else -> false
@@ -47,4 +50,19 @@ class HomeActivity : AppCompatActivity() {
             .replace(R.id.fragment_container, fragment)
             .commit()
     }
+
+    private fun cerrarSesion() {
+        // Borrar datos de SharedPreferences
+        val prefs = getSharedPreferences("SesionUsuario", MODE_PRIVATE)
+        prefs.edit().clear().apply()
+
+        // Ir a la pantalla de Login
+        val intent = Intent(this, MainActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+
+        // Finalizar HomeActivity para que no se pueda volver con el botón "atrás"
+        finish()
+    }
+
 }

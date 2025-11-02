@@ -13,21 +13,21 @@ import com.cibertec.ciberbet.MainActivity
 /*
 import com.cibertec.ciberbet.HistorialApuestasActivity*/
 import com.cibertec.ciberbet.data.database.AppApplication
-import com.cibertec.ciberbet.databinding.FragmentPerfilBinding
+import com.cibertec.ciberbet.databinding.UserFragmentPerfilBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class PerfilFragment : Fragment() {
 
-    private var _binding: FragmentPerfilBinding? = null
+    private var _binding: UserFragmentPerfilBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentPerfilBinding.inflate(inflater, container, false)
+        _binding = UserFragmentPerfilBinding.inflate(inflater, container, false)
         return binding.root
     }
 
