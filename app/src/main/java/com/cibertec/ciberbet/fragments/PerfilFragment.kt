@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -42,9 +43,14 @@ class PerfilFragment : Fragment() {
         binding.tvProfileName.text = nombreUsuario
         binding.tvProfileEmail.text = correoUsuario
 
-        // Botón eliminar cuenta
+        // Botón eliminar cuenta con confirmación
         binding.btnEliminarCuenta.setOnClickListener {
-            eliminarCuenta()
+            mostrarDialogoConfirmacion()
+        }
+
+        // Botón configuración
+        binding.btnConfiguracion.setOnClickListener {
+            Toast.makeText(requireContext(), "Función para actualizar perfil en desarrollo", Toast.LENGTH_SHORT).show()
         }
 /*
         // Botón mostrar apuestas
@@ -81,6 +87,20 @@ class PerfilFragment : Fragment() {
         } else {
             Toast.makeText(requireContext(), "Error al obtener el ID del usuario", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun mostrarDialogoConfirmacion() {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Confirmar eliminación")
+            .setMessage("¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer.")
+            .setPositiveButton("Eliminar") { _, _ ->
+                eliminarCuenta()
+            }
+            .setNegativeButton("Cancelar") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setCancelable(false)
+            .show()
     }
 
     override fun onDestroyView() {
