@@ -35,6 +35,9 @@ class EquiposFragment : Fragment() {
 
     private var equipoEditando: Equipo? = null
 
+    private var deportesListener: ValueEventListener? = null
+    private var equiposListener: ValueEventListener? = null
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -86,6 +89,8 @@ class EquiposFragment : Fragment() {
     private fun cargarDeportes() {
         deportesDatabase.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
+                if (!isAdded) return
+
                 listaDeportes.clear()
                 deportesMap.clear()
 
@@ -120,6 +125,8 @@ class EquiposFragment : Fragment() {
     }
 
     private fun setupSpinner() {
+        if (!isAdded) return
+
         val deportesNombres = listaDeportes.map { it.nombre }
         val adapter = ArrayAdapter(
             requireContext(),
@@ -133,6 +140,8 @@ class EquiposFragment : Fragment() {
     private fun cargarEquipos() {
         database.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
+                if (!isAdded) return
+
                 listaEquipos.clear()
                 for (data in snapshot.children) {
                     val equipo = data.getValue(Equipo::class.java)
@@ -312,6 +321,11 @@ class EquiposFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+
+        deportesListener?.let { deportesDatabase.removeEventListener(it) }
+        equiposListener?.let { database.removeEventListener(it) }
+
+
         _binding = null
     }
 }

@@ -1,6 +1,5 @@
 package com.cibertec.ciberbet.fragments
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,24 +7,34 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-/*
-import com.cibertec.ciberbet.ApuestasActivity*/
-import com.cibertec.ciberbet.MainActivity
-import com.cibertec.ciberbet.models.Match
 import com.cibertec.ciberbet.adapters.MatchAdapter
-import com.cibertec.ciberbet.databinding.FragmentHomeBinding
+import com.cibertec.ciberbet.databinding.UserFragmentHomeBinding
+import com.cibertec.ciberbet.models.Deporte
+import com.cibertec.ciberbet.models.Equipo
+import com.cibertec.ciberbet.models.Evento
+import com.google.firebase.database.*
 import java.util.Calendar
 
 class HomeFragment : Fragment() {
 
-    private var _binding: FragmentHomeBinding? = null
+    private var _binding: UserFragmentHomeBinding? = null
     private val binding get() = _binding!!
+
+    private lateinit var eventosRef: DatabaseReference
+    private lateinit var equiposRef: DatabaseReference
+    private lateinit var deportesRef: DatabaseReference
+
+    private val listaEventos = mutableListOf<Evento>()
+    private lateinit var adapter: MatchAdapter
+
+    private val equiposMap = mutableMapOf<String, Equipo>()
+    private val deportesMap = mutableMapOf<String, Deporte>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentHomeBinding.inflate(inflater, container, false)
+        _binding = UserFragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -35,30 +44,66 @@ class HomeFragment : Fragment() {
         val prefs = requireActivity().getSharedPreferences("SesionUsuario", AppCompatActivity.MODE_PRIVATE)
         val nombreUsuario = prefs.getString("usuario_nombre", "Usuario")
 
-        // --- Mostrar los datos en pantalla ---
         binding.tvUserName.text = nombreUsuario ?: "Usuario"
         binding.tvGreeting.text = obtenerSaludo()
 
-        // 1. Preparamos datos de ejemplo para la lista
-        val sampleMatches = listOf(
-            Match("Chelsea", "Leicester C", "1 : 2", "49:30", "Premier League"),
-            Match("Man. United", "Arsenal", "0 : 0", "25:10", "Premier League"),
-            Match("Liverpool", "Man. City", "3 : 1", "78:55", "Premier League"),
-            Match("Alianza Lima", "Universitario", "2 : 1", "Finalizado", "Liga 1")
-        )
-/*
-        // 2. Creamos el adaptador
-        val adapter = MatchAdapter(sampleMatches) { match ->
-            val intent = Intent(requireContext(), ApuestasActivity::class.java)
-            startActivity(intent)
-        }
-*/
-        // 3. Configuramos el RecyclerView
-        binding.recyclerViewMatches.layoutManager = LinearLayoutManager(requireContext())
- /*       binding.recyclerViewMatches.adapter = adapter*/
+        // Firebase
+        val db = FirebaseDatabase.getInstance()
+        eventosRef = db.getReference("eventos_deportivos")
+        equiposRef = db.getReference("equipos")
+        deportesRef = db.getReference("deportes")
 
-        // ⚠️ Ya NO usamos botones de navegación aquí
-        // El cambio de fragment se hace desde el BottomNavigationView en HomeActivity
+        // Configurar RecyclerView
+        adapter = MatchAdapter(listaEventos, equiposMap, deportesMap)
+        binding.recyclerViewMatches.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerViewMatches.adapter = adapter
+
+        cargarDatos()
+    }
+
+    private fun cargarDatos() {
+        deportesRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                deportesMap.clear()
+                for (data in snapshot.children) {
+                    val dep = data.getValue(Deporte::class.java)
+                    dep?.let { deportesMap[it.idDeporte] = it }
+                }
+                cargarEquipos()
+            }
+
+            override fun onCancelled(error: DatabaseError) {}
+        })
+    }
+
+    private fun cargarEquipos() {
+        equiposRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                equiposMap.clear()
+                for (data in snapshot.children) {
+                    val eq = data.getValue(Equipo::class.java)
+                    eq?.let { equiposMap[it.idEquipo] = it }
+                }
+                cargarEventos()
+            }
+
+            override fun onCancelled(error: DatabaseError) {}
+        })
+    }
+
+    private fun cargarEventos() {
+        eventosRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                listaEventos.clear()
+                for (data in snapshot.children) {
+                    val evento = data.getValue(Evento::class.java)
+                    evento?.let { listaEventos.add(it) }
+                }
+                adapter.notifyDataSetChanged()
+            }
+
+            override fun onCancelled(error: DatabaseError) {}
+        })
     }
 
     private fun obtenerSaludo(): String {

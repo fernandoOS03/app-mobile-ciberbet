@@ -1,45 +1,52 @@
 package com.cibertec.ciberbet.adapters
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.cibertec.ciberbet.R
-import com.cibertec.ciberbet.databinding.ItemMatchBinding
-import com.cibertec.ciberbet.models.Match
+import com.cibertec.ciberbet.databinding.ItemMatchNewBinding
+import com.cibertec.ciberbet.models.Deporte
+import com.cibertec.ciberbet.models.Equipo
+import com.cibertec.ciberbet.models.Evento
+import com.squareup.picasso.Picasso
 
 class MatchAdapter(
-    private val matchList: List<Match>,
-    private val onItemClick: (Match) -> Unit
+    private val listaEventos: List<Evento>,
+    private val equiposMap: Map<String, Equipo>,
+    private val deportesMap: Map<String, Deporte>
 ) : RecyclerView.Adapter<MatchAdapter.MatchViewHolder>() {
 
-    // Esta clase interna representa una sola fila (un solo item_match.xml)
-    inner class MatchViewHolder(val binding: ItemMatchBinding) : RecyclerView.ViewHolder(binding.root)
+    inner class MatchViewHolder(val binding: ItemMatchNewBinding) :
+        RecyclerView.ViewHolder(binding.root)
 
-    // Se llama para crear una nueva tarjeta vacía
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MatchViewHolder {
-        val binding = ItemMatchBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ItemMatchNewBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return MatchViewHolder(binding)
     }
 
-    // Se llama para rellenar una tarjeta con los datos de un partido
     override fun onBindViewHolder(holder: MatchViewHolder, position: Int) {
-        val match = matchList[position]
-        holder.binding.tvTeam1.text = match.team1Name
-        holder.binding.tvTeam2.text = match.team2Name
-        holder.binding.tvScore.text = match.score
-        holder.binding.tvTime.text = match.time
-        holder.binding.tvLeague.text = match.league
+        val evento = listaEventos[position]
+        val equipoLocal = equiposMap[evento.equipoLocal]
+        val equipoVisitante = equiposMap[evento.equipoVisitante]
+        val deporte = deportesMap[evento.idDeporte]
 
-        // Aquí está la magia: configura el clic para toda la tarjeta
-        holder.itemView.setOnClickListener {
-            onItemClick(match)
+        with(holder.binding) {
+            tvDeporteEvento.text = deporte?.nombre ?: "Desconocido"
+            tvEstadoEvento.text = evento.estadoEvento
+            tvTeam1.text = equipoLocal?.nombre ?: "Equipo A"
+            tvTeam2.text = equipoVisitante?.nombre ?: "Equipo B"
+            tvScore.text = "${evento.resultadoLocal ?: "-"} : ${evento.resultadoVisitante ?: "-"}"
+            tvFechaHora.text = evento.fecha_hora
+            tvUbicacion.text = evento.ubicacion
+
+            /*// Cargar logos si existen
+            if (!equipoLocal?.logo.isNullOrEmpty()) {
+                Picasso.get().load(equipoLocal!!.logo).into(ivTeam1)
+            }
+            if (!equipoVisitante?.logo.isNullOrEmpty()) {
+                Picasso.get().load(equipoVisitante!!.logo).into(ivTeam2)
+            }*/
         }
     }
 
-    // Devuelve cuántos elementos hay en la lista
-    override fun getItemCount(): Int {
-        return matchList.size
-    }
+    override fun getItemCount() = listaEventos.size
 }
