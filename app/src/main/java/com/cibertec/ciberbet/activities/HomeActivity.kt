@@ -1,12 +1,15 @@
 package com.cibertec.ciberbet.activities
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.appcompat.app.AppCompatActivity
+
 import com.cibertec.ciberbet.R
 import com.cibertec.ciberbet.databinding.UserInicioBinding
 import com.cibertec.ciberbet.fragments.HomeFragment
 import com.cibertec.ciberbet.fragments.PerfilFragment
+import com.cibertec.ciberbet.databinding.UserInicioBinding
+import com.cibertec.ciberbet.fragments.MisApuestasFragment
 
 class HomeActivity : AppCompatActivity() {
 
