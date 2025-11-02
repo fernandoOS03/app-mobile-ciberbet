@@ -33,6 +33,7 @@
 
     <!-- Campo: Nombres completos -->
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayoutFullName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
@@ -54,6 +55,7 @@
 
     <!-- Campo: DNI -->
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayoutDni"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
@@ -76,6 +78,7 @@
 
     <!-- Campo: Número de teléfono -->
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayoutPhone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
@@ -98,6 +101,7 @@
 
     <!-- Campo: Correo electrónico -->
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayoutEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
@@ -119,6 +123,7 @@
 
     <!-- Campo: Contraseña -->
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayoutPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
