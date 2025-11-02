@@ -20,5 +20,7 @@ interface UsuarioDAO {
 
     @Query("SELECT * FROM usuario WHERE correo = :correoUsu AND password = :passwUs AND flgEli = 0 LIMIT 1")
     fun getUsuario(correoUsu: String, passwUs: String): Usuario?
+    @Query("SELECT * FROM usuario WHERE id = :idUsuario LIMIT 1")
+    fun getUsuarioPorId(idUsuario:Int):Usuario?
 
 }
