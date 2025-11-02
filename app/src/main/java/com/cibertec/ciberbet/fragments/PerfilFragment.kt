@@ -2,58 +2,89 @@ package com.cibertec.ciberbet.fragments
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.LinearLayout
-import android.widget.TextView
-import com.cibertec.ciberbet.R
-import com.cibertec.ciberbet.activities.AdminActivity
-
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import com.cibertec.ciberbet.MainActivity
+/*
+import com.cibertec.ciberbet.HistorialApuestasActivity*/
+import com.cibertec.ciberbet.data.database.AppApplication
+import com.cibertec.ciberbet.databinding.FragmentPerfilBinding
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class PerfilFragment : Fragment() {
 
+    private var _binding: FragmentPerfilBinding? = null
+    private val binding get() = _binding!!
+
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
+        inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Layout temporal con botón para ir al panel admin
-        val layout = LinearLayout(requireContext()).apply {
-            orientation = LinearLayout.VERTICAL
-            setPadding(32, 32, 32, 32)
+        _binding = FragmentPerfilBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // Cargar datos guardados del usuario
+        val prefs = requireContext().getSharedPreferences("SesionUsuario", AppCompatActivity.MODE_PRIVATE)
+        val nombreUsuario = prefs.getString("usuario_nombre", "Usuario")
+        val correoUsuario = prefs.getString("usuario_email", "example@email.com")
+
+        binding.tvProfileName.text = nombreUsuario
+        binding.tvProfileEmail.text = correoUsuario
+
+        // Botón eliminar cuenta
+        binding.btnEliminarCuenta.setOnClickListener {
+            eliminarCuenta()
+        }
+/*
+        // Botón mostrar apuestas
+        binding.btnMostrarApuestas.setOnClickListener {
+            val intent = Intent(requireContext(), HistorialApuestasActivity::class.java)
+            startActivity(intent)
+        }*/
+
+        // Botón configuración
+        binding.btnConfiguracion.setOnClickListener {
+            Toast.makeText(requireContext(), "Función para actualizar perfil en desarrollo", Toast.LENGTH_SHORT).show()
         }
 
-        val textView = TextView(requireContext()).apply {
-            text = "👤 Mi Perfil\n\n" +
-                    "Usuario: admin@ciberbet.com\n" +
-                    "Saldo: S/ 1,000.00\n\n" +
-                    "Aquí podrás:\n" +
-                    "• Ver tu información personal\n" +
-                    "• Consultar tu saldo\n" +
-                    "• Realizar depósitos/retiros\n" +
-                    "• Editar tu cuenta\n" +
-                    "• Cerrar sesión\n\n"
-            textSize = 18f
-        }
-        layout.addView(textView)
+    }
 
-        // Botón para ir al panel de administración
-        val btnAdmin = Button(requireContext()).apply {
-            text = "🔧 Panel de Administración"
-            setOnClickListener {
-                val intent = Intent(requireContext(), AdminActivity::class.java)
+    private fun eliminarCuenta() {
+        val prefs = requireContext().getSharedPreferences("SesionUsuario", AppCompatActivity.MODE_PRIVATE)
+        val idUsuario = prefs.getInt("usuario_id", -1)
+
+        if (idUsuario != -1) {
+            lifecycleScope.launch {
+                withContext(Dispatchers.IO) {
+                    AppApplication.database.usuarioDao().deleteUsuario(idUsuario)
+                }
+
+                prefs.edit().clear().apply()
+                Toast.makeText(requireContext(), "Cuenta eliminada correctamente", Toast.LENGTH_SHORT).show()
+
+                val intent = Intent(requireContext(), MainActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(intent)
+                requireActivity().finish()
             }
+        } else {
+            Toast.makeText(requireContext(), "Error al obtener el ID del usuario", Toast.LENGTH_SHORT).show()
         }
-        layout.addView(btnAdmin)
+    }
 
-        return layout
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

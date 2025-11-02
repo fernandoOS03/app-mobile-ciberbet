@@ -1,14 +1,162 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.HomeFragment">
+    android:background="@android:color/white"
+    >
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:id="@+id/tvGreeting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:text="Hola,"
+        android:textColor="#757575"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-</FrameLayout>
+    <TextView
+        android:id="@+id/tvUserName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-medium"
+        android:text="GABRIEL LOPEZ"
+        android:textColor="@android:color/black"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@id/tvGreeting"
+        app:layout_constraintTop_toBottomOf="@id/tvGreeting" />
+
+    <TextView
+        android:id="@+id/tvBalanceLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:text="Saldo disponible:"
+        android:textColor="#757575"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tvGreeting" />
+
+    <TextView
+        android:id="@+id/tvBalanceAmount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="S/. 250.00"
+        android:textColor="#F44336"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@id/tvBalanceLabel"
+        app:layout_constraintTop_toBottomOf="@id/tvBalanceLabel" />
+
+    <EditText
+        android:id="@+id/etSearch"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="24dp"
+        android:drawableStart="@drawable/ic_search"
+        android:drawablePadding="12dp"
+        android:hint="buscar equipo"
+        android:padding="12dp"
+        android:textColor="@android:color/black"
+        android:textColorHint="#9E9E9E"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvUserName" />
+
+    <LinearLayout
+        android:id="@+id/layoutFilters"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="@id/etSearch"
+        app:layout_constraintStart_toStartOf="@id/etSearch"
+        app:layout_constraintTop_toBottomOf="@id/etSearch">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#212121"
+            android:text="Fútbol"
+            android:textColor="@android:color/white"
+            app:icon="@drawable/ic_futbol"
+            app:iconTint="@android:color/white" />
+
+        <Button
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            android:backgroundTint="#EEEEEE"
+            android:text="Voley"
+            android:textColor="#757575"
+            app:icon="@drawable/ic_voley"
+            app:iconTint="#757575"
+            app:strokeWidth="0dp" />
+
+        <Button
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#EEEEEE"
+            android:text="Basket"
+            android:textColor="#757575"
+            app:icon="@drawable/ic_basket"
+            app:iconTint="#757575"
+            app:strokeWidth="0dp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvEventsTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Eventos"
+        android:textColor="@android:color/black"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@id/layoutFilters"
+        app:layout_constraintTop_toBottomOf="@id/layoutFilters" />
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/switchLive"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="true"
+        app:layout_constraintBottom_toBottomOf="@id/tvLiveLabel"
+        app:layout_constraintEnd_toEndOf="@id/layoutFilters"
+        app:layout_constraintTop_toTopOf="@id/tvLiveLabel" />
+
+    <TextView
+        android:id="@+id/tvLiveLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableStart="@drawable/ic_live_dot"
+        android:drawablePadding="4dp"
+        android:gravity="center"
+        android:text="EN VIVO"
+        android:textColor="#757575"
+        app:layout_constraintBottom_toBottomOf="@id/tvEventsTitle"
+        app:layout_constraintEnd_toStartOf="@id/switchLive"
+        app:layout_constraintTop_toTopOf="@id/tvEventsTitle" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewMatches"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:clipToPadding="false"
+        android:paddingBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvEventsTitle"
+        tools:listitem="@layout/item_match" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

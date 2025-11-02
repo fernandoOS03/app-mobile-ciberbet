@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import androidx.appcompat.app.AppCompatActivity
 
 import com.cibertec.ciberbet.R
+import com.cibertec.ciberbet.databinding.UserInicioBinding
 import com.cibertec.ciberbet.fragments.HomeFragment
 import com.cibertec.ciberbet.fragments.PerfilFragment
 import com.cibertec.ciberbet.databinding.UserInicioBinding
@@ -27,15 +28,15 @@ class HomeActivity : AppCompatActivity() {
         // Configurar el Bottom Navigation
         binding.bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.nav_home -> {
+                R.id.btnNavProfile -> {
+                    cargarFragment(PerfilFragment())
+                    true
+                }
+                R.id.btnNavHome -> {
                     cargarFragment(HomeFragment())
                     true
                 }
-                R.id.nav_apuestas -> {
-                    cargarFragment(MisApuestasFragment())
-                    true
-                }
-                R.id.nav_perfil -> {
+                R.id.btnNavLogout -> {
                     cargarFragment(PerfilFragment())
                     true
                 }

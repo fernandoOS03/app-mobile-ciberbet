@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/btnNavProfile"
+        android:icon="@drawable/ic_profile"
+        android:title="Perfil"
+        app:iconTint="@android:color/white" />
+
+    <item
+        android:id="@+id/btnNavHome"
+        android:icon="@drawable/ic_home"
+        android:title="Inicio"
+        app:iconTint="@android:color/white" />
+
+    <item
+        android:id="@+id/btnNavLogout"
+        android:icon="@drawable/ic_logout"
+        android:title="Salir"
+        app:iconTint="@android:color/white" />
+
+</menu>
