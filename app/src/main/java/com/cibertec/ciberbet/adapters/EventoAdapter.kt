@@ -1,20 +1,18 @@
 package com.cibertec.ciberbet.adapters
 
-import android.graphics.Color
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.TextView
+import android.graphics.Color
+import android.view.LayoutInflater
+
 import androidx.recyclerview.widget.RecyclerView
-import com.cibertec.ciberbet.R
 import com.cibertec.ciberbet.databinding.ItemEventoBinding
 import com.cibertec.ciberbet.models.Evento
 
 class EventoAdapter(
     private val listaEventos: List<Evento>,
-    private val deportesMap: Map<String, String>, // id_deporte -> nombre
-    private val equiposMap: Map<String, String>, // id_equipo -> nombre
+    private val deportesMap: Map<String, String>,
+    private val equiposMap: Map<String, String>,
     private val onEditClick: (Evento) -> Unit,
     private val onDeleteClick: (Evento) -> Unit
 ) : RecyclerView.Adapter<EventoAdapter.ViewHolder>() {

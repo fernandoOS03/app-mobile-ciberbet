@@ -7,7 +7,6 @@ import com.cibertec.ciberbet.databinding.ItemMatchNewBinding
 import com.cibertec.ciberbet.models.Deporte
 import com.cibertec.ciberbet.models.Equipo
 import com.cibertec.ciberbet.models.Evento
-import com.squareup.picasso.Picasso
 
 class MatchAdapter(
     private val listaEventos: List<Evento>,

@@ -55,8 +55,11 @@ class PerfilFragment : Fragment() {
 
         // Botón configuración
         binding.btnConfiguracion.setOnClickListener {
-            Toast.makeText(requireContext(), "Función para actualizar perfil en desarrollo", Toast.LENGTH_SHORT).show()
-        }
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(com.cibertec.ciberbet.R.id.fragment_container, PerfilEditFragment())
+                .addToBackStack(null)
+                .commit()
+         }
 
     }
 
