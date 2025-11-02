@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:backgroundTint="@color/white"
+    android:layout_marginVertical="4dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="2dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="12dp">
+
+        <!-- Header: Estado -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end"
+            android:layout_marginBottom="8dp">
+
+            <TextView
+                android:id="@+id/tvEstadoCuota"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Activo"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/holo_green_dark"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="2dp" />
+
+        </LinearLayout>
+
+        <!-- Descripción y Valor -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="8dp">
+
+            <TextView
+                android:id="@+id/tvDescripcionCuota"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Local gana"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/black" />
+
+            <TextView
+                android:id="@+id/tvValorCuota"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1.75"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/holo_blue_dark"
+                android:paddingHorizontal="12dp" />
+
+        </LinearLayout>
+
+        <!-- Información del Evento -->
+        <TextView
+            android:id="@+id/tvEventoNombre"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Real Madrid vs Barcelona"
+            android:textSize="14sp"
+            android:textColor="@android:color/black"
+            android:layout_marginBottom="4dp"
+            android:drawablePadding="4dp"
+            app:drawableStartCompat="@android:drawable/ic_menu_my_calendar"
+            android:drawableTint="@android:color/darker_gray" />
+
+        <!-- Tipo de Apuesta -->
+        <TextView
+            android:id="@+id/tvTipoApuesta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Resultado Final"
+            android:textSize="12sp"
+            android:textColor="@android:color/darker_gray"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Botones de acción -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end">
+
+            <Button
+                android:id="@+id/btnEditarCuota"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Editar"
+                android:textSize="12sp"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_marginEnd="4dp" />
+
+            <Button
+                android:id="@+id/btnEliminarCuota"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Eliminar"
+                android:textSize="12sp"
+                android:textColor="@color/dark_red"
+                style="@style/Widget.Material3.Button.TextButton" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

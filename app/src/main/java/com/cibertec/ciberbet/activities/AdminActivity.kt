@@ -5,6 +5,8 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.cibertec.ciberbet.R
 import com.cibertec.ciberbet.databinding.AdminActivityAdminBinding
+import com.cibertec.ciberbet.fragments.CuotasContainerFragment
+import com.cibertec.ciberbet.fragments.CuotasFragment
 import com.cibertec.ciberbet.fragments.DeportesFragment
 import com.cibertec.ciberbet.fragments.EquiposFragment
 import com.cibertec.ciberbet.fragments.EventosFragment
@@ -42,6 +44,10 @@ class AdminActivity : AppCompatActivity() {
                 }
                 R.id.nav_admin_eventos -> {
                     cargarFragment(EventosFragment())
+                    true
+                }
+                R.id.nav_admin_cuotas -> {
+                    cargarFragment(CuotasContainerFragment())
                     true
                 }
                 else -> false
