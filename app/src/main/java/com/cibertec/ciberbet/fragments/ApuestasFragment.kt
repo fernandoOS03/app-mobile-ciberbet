@@ -208,9 +208,12 @@ class ApuestasFragment : Fragment() {
             return
         }
 
-        // Obtener ID del usuario (deberías obtenerlo Firebase Auth)
-        val prefs = requireActivity().getSharedPreferences("SesionUsuario", android.content.Context.MODE_PRIVATE)
-        val idUsuario = prefs.getString("usuario_id", "") ?: ""
+        val idUsuario = arguments?.getString("idUsuario") ?: ""
+        if (idUsuario.isEmpty()) {
+            Toast.makeText(requireContext(), "Error: Usuario no identificado", Toast.LENGTH_SHORT).show()
+            return
+        }
+
 
         if (idUsuario.isEmpty()) {
             Toast.makeText(requireContext(), "Error: Usuario no identificado", Toast.LENGTH_SHORT).show()

@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cibertec.ciberbet.adapters.MatchAdapter
@@ -33,6 +32,8 @@ class HomeFragment : Fragment() {
     private val equiposMap = mutableMapOf<String, Equipo>()
     private val deportesMap = mutableMapOf<String, Deporte>()
 
+    private var idUsuario: String = ""
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -45,10 +46,10 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val prefs = requireActivity().getSharedPreferences("SesionUsuario", AppCompatActivity.MODE_PRIVATE)
-        val nombreUsuario = prefs.getString("usuario_nombre", "Usuario")
+        // Obtener idUsuario desde argumentos
+        idUsuario = arguments?.getString("idUsuario") ?: ""
 
-        binding.tvUserName.text = nombreUsuario ?: "Usuario"
+        binding.tvUserName.text = "Usuario" // opcional: luego puedes obtener nombre desde Firebase
         binding.tvGreeting.text = obtenerSaludo()
 
         // Firebase
@@ -57,10 +58,11 @@ class HomeFragment : Fragment() {
         equiposRef = db.getReference("equipos")
         deportesRef = db.getReference("deportes")
 
-        // Configurar RecyclerView
+        // RecyclerView
         adapter = MatchAdapter(listaFiltrada, equiposMap, deportesMap) { evento ->
             val bundle = Bundle().apply {
                 putString("idEvento", evento.idEvento)
+                putString("idUsuario", idUsuario)
                 putString("equipoLocal", equiposMap[evento.equipoLocal]?.nombre ?: "Equipo Local")
                 putString("equipoVisitante", equiposMap[evento.equipoVisitante]?.nombre ?: "Equipo Visitante")
                 putString("fecha_hora", evento.fecha_hora)
@@ -157,18 +159,15 @@ class HomeFragment : Fragment() {
             it.nombre.equals(nombreDeporte, ignoreCase = true)
         }
 
+        listaFiltrada.clear()
         if (deporteSeleccionado != null) {
             val idDep = deporteSeleccionado.idDeporte
             val eventosFiltrados = listaEventos.filter { it.idDeporte == idDep }
-
-            listaFiltrada.clear()
             listaFiltrada.addAll(eventosFiltrados)
-            adapter.notifyDataSetChanged()
         } else {
-            listaFiltrada.clear()
             listaFiltrada.addAll(listaEventos)
-            adapter.notifyDataSetChanged()
         }
+        adapter.notifyDataSetChanged()
     }
 
     private fun actualizarBotones(activo: View) {
